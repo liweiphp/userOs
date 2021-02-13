@@ -1,19 +1,26 @@
 package controller
 
 import (
-	"day03/model"
-	"day03/util"
 	"fmt"
 )
 
-func Login()  {
-	fmt.Print("请输入用户名：")
-	username := util.CRead()
-	fmt.Print("请输入密码：")
-	password := util.CRead()
-	fmt.Print(password)
-	var datas map[string]model.Model
+var session = false
 
-	model.RfData("user", username, datas)
-	fmt.Print("get data:", datas)
+type IndexController struct {
+}
+
+func (controller IndexController) Welcome() {
+	fmt.Print("欢迎来到信息管理系统\n")
+
+	view = "user_view"
+}
+
+func (controller IndexController) Index() {
+	fmt.Println("这是首页")
+	view = "index_view"
+}
+
+func (controller IndexController) List() {
+	fmt.Println("这是列表")
+	view = "index_view"
 }

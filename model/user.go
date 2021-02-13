@@ -1,12 +1,14 @@
 package model
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type Model interface {
 	ToString() string
 }
 
-var Datas map[string]Model
+var UserDatas map[string]Model
 
 type User struct {
 	username string
@@ -19,33 +21,38 @@ func NewUser() *User {
 	return &User{}
 }
 
-func (u User) SetUsername(username string)  {
+func (u *User) SetUsername(username string) {
 	u.username = username
 }
-func (u User) SetPassword(password string)  {
-	u.password  = password
+func (u *User) SetPassword(password string) {
+	u.password = password
 }
-func (u User) SetAge(age int)  {
+func (u *User) SetAge(age int) {
 	u.age = age
 }
-func (u User) SetSex(sex string)  {
+func (u *User) SetSex(sex string) {
 	u.sex = sex
 }
 
-func GetUsername(u User) string {
+func (u *User) GetUsername() string {
 	return u.username
 }
-func GetPassword(u User) string {
+func (u *User) GetPassword() string {
 	return u.password
 }
-func GetAge(u User) int {
+func (u *User) GetAge() int {
 	return u.age
 }
-func GetSex(u User) string {
+func (u *User) GetSex() string {
 	return u.sex
 }
-
-func (u User)ToString() string {
-	return u.username + "," + u.password + "," + strconv.Itoa(u.age) + "," + u.sex
+func GetUser(username string) *User {
+	if UserDatas == nil {
+		return nil
+	}
+	return UserDatas[username].(*User)
 }
 
+func (u *User) ToString() string {
+	return u.username + "," + u.password + "," + strconv.Itoa(u.age) + "," + u.sex
+}

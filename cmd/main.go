@@ -1,6 +1,6 @@
 package main
 
-import "day03/controller"
+import "manager/controller"
 
 func main() {
 	controller.Run()

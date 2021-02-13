@@ -10,10 +10,11 @@ type UserController struct {
 
 }
 
-func Login() bool {
-	fmt.Print("请输入用户名：")
+func (u *UserController) Login() bool {
+	//view = "user_view"
+	fmt.Println("请输入用户名：")
 	username := util.CRead()
-	fmt.Print("请输入密码：")
+	fmt.Println("请输入密码：")
 	password := util.CRead()
 	user := model.GetUser(username)
 	if user == nil {
@@ -24,10 +25,28 @@ func Login() bool {
 	if user.GetPassword() == password {
 		//登陆成功
 		fmt.Println("登陆成功")
+		view = "index_view"
 		session = true
 		return true
 	} else {
-		fmt.Print("密码错误")
+		fmt.Println("密码错误")
 		return false
 	}
+}
+
+func (u *UserController) Register() bool {
+	fmt.Println("注册用户")
+	fmt.Println("请输入用户名：")
+	//username := util.CRead()
+	fmt.Println("请输入密码：")
+	//password := util.CRead()
+	fmt.Println("请输入年龄：")
+	//age := util.CRead()
+	fmt.Println("请输入性别：")
+	//sex := util.CRead()
+
+	//modelV := reflect.ValueOf()
+
+	view = "user_view"
+	return true
 }

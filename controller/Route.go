@@ -1,31 +1,61 @@
 package controller
 
 import (
-	"day03/util"
+	"errors"
 	"fmt"
+	"manager/util"
+	"reflect"
 	"strconv"
+	"strings"
+)
+
+var (
+	next        string
+	views       map[string][][3]string
+	view        string
+	controllers map[string]interface{}
 )
 
 func Run() {
-	dispatch()
+	next = "index::Welcome"
+	fmt.Println("读取配置文件：",util.GetConfig())
+	for {
+		result := util.Creturn(util.Cfunc(dispatch))
+		if result {
+			break
+		}
+	}
+
 }
 
-func dispatch() {
-	fmt.Print("欢迎来到信息管理系统\n")
-	fmt.Print("请选择你的操作\n")
-	oper := []string{"登陆", "注册"}
-	for key, value := range oper {
-		fmt.Printf("%d %s", key, value)
+func dispatch() (bool, error) {
+	//============默认方法调用 start================
+	//字符串拆分 控制器&方法
+	conAct := strings.Split(next, "::")
+	fmt.Println("默认控制器和方法", conAct)
+	//控制器
+	contro, ok := controllers[conAct[0]]
+	if !ok {
+		return false, errors.New("无此控制器")
 	}
-	flag, err := strconv.Atoi(util.CRead())
-	if err != nil {
-		fmt.Print(err)
-		return
+	conV := reflect.ValueOf(contro)
+	//调用方法
+	conV.MethodByName(conAct[1]).Call([]reflect.Value{})
+	//=============默认方法调用 end==============
+
+	action, _ := GetView(view)
+	for {
+		input := util.CRead()
+		if input == "x" {
+			return true,nil
+		}
+		order, err := strconv.Atoi(input)
+		if order < len(action) && err == nil {
+			next = action[order]
+			break
+		}
+		fmt.Println("输入指令错误")
 	}
-	switch flag {
-	case 0:
-		Login()
-	case 1:
-		fmt.Print("register")
-	}
+
+	return false, nil
 }
