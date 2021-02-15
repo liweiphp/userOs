@@ -1,12 +1,10 @@
 package model
 
 import (
+	"fmt"
 	"strconv"
 )
 
-type Model interface {
-	ToString() string
-}
 
 var UserDatas map[string]Model
 
@@ -50,9 +48,18 @@ func GetUser(username string) *User {
 	if UserDatas == nil {
 		return nil
 	}
-	return UserDatas[username].(*User)
+	m,ok :=UserDatas[username].(*User)
+	if ok == false {
+		fmt.Println("查询不到用户")
+	}
+	return m
 }
 
 func (u *User) ToString() string {
 	return u.username + "," + u.password + "," + strconv.Itoa(u.age) + "," + u.sex
+}
+
+func (u *User) Save() bool {
+	UserDatas[u.username] = u
+	return WfData("user", UserDatas)
 }

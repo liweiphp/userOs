@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"manager/model"
 	"manager/util"
+	"strconv"
 )
 
 type UserController struct {
@@ -35,18 +36,28 @@ func (u *UserController) Login() bool {
 }
 
 func (u *UserController) Register() bool {
+	user := model.NewUser()
 	fmt.Println("注册用户")
 	fmt.Println("请输入用户名：")
-	//username := util.CRead()
+	username := util.CRead()
+	user.SetUsername(username)
 	fmt.Println("请输入密码：")
-	//password := util.CRead()
+	password := util.CRead()
+	fmt.Println("确认密码：")
+	rePassword := util.CRead()
+	if password != rePassword {
+		fmt.Println("输入密码不一致，请重新输入")
+		return false
+	}
+	user.SetPassword(password)
 	fmt.Println("请输入年龄：")
-	//age := util.CRead()
+	age := util.CRead()
+	age1, _ := strconv.Atoi(age)
+	user.SetAge(age1)
 	fmt.Println("请输入性别：")
-	//sex := util.CRead()
-
-	//modelV := reflect.ValueOf()
-
+	sex := util.CRead()
+	user.SetSex(sex)
+	user.Save()
 	view = "user_view"
 	return true
 }

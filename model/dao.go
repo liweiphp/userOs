@@ -13,12 +13,23 @@ import (
 )
 
 var (
-	path  string
-	suffix  = ".sql"
+	path   string
+	suffix = ".sql"
 	Models map[string]interface{}
 )
 
-func init()  {
+type Model interface {
+	ToString() string
+	Save() bool
+}
+
+/**
+初始化：
+1。数据配置文件
+2。模型
+3。用户数据
+*/
+func init() {
 	path = util.GetConfig().DataPath
 	Models = make(map[string]interface{}, 0)
 	Models["user"] = NewUser
@@ -28,22 +39,23 @@ func init()  {
 	RfData("user", "username", UserDatas)
 
 }
+
 /**
 读取用户信息
- */
+*/
 func RfData(name string, primary string, datas map[string]Model) error {
 	//打开数据文件
-	f, err := os.Open(path+name+suffix)
+	f, err := os.Open(path + name + suffix)
 	if err != nil {
 		fmt.Print("读取文件错误1", err)
 		return errors.New("打开数据文件失败")
 	}
 	defer f.Close()
 	buf := bufio.NewReader(f)
-	var field  []string
+	var field []string
 	var dataSlice []string
 	for {
-		data,err := buf.ReadBytes('\n')
+		data, err := buf.ReadBytes('\n')
 		if err != nil {
 			if err == io.EOF {
 				//fmt.Print("is eof", err)
@@ -69,10 +81,11 @@ func RfData(name string, primary string, datas map[string]Model) error {
 	}
 	return nil
 }
+
 /**
 根据字段类型 设置模型
- */
-func toModel(name string, primary string, datas map[string]Model, field,data []string){
+*/
+func toModel(name string, primary string, datas map[string]Model, field, data []string) {
 	modelV := reflect.ValueOf(Models[name])
 	newModel := modelV.Call([]reflect.Value{})[0]
 	var primaryKey string
@@ -92,10 +105,10 @@ func toModel(name string, primary string, datas map[string]Model, field,data []s
 	datas[primaryKey] = newModel.Interface().(Model)
 }
 
-func toType(data ,dtype string) interface{} {
+func toType(data, dtype string) interface{} {
 	switch dtype {
 	case "int":
-		data,err := strconv.Atoi(data)
+		data, err := strconv.Atoi(data)
 		if err != nil {
 			fmt.Print(err)
 			return nil
@@ -104,10 +117,45 @@ func toType(data ,dtype string) interface{} {
 	}
 	return data
 }
+
 /**
 写入数据文件
- */
-func WfData(name string, datas map[string]Model)  {
-
+*/
+func WfData(name string, datas map[string]Model) bool {
+	dataStr := getModelString(datas)
+	fmt.Println(dataStr)
+	//打开数据文件
+	f, err := os.OpenFile(path + name + suffix, os.O_WRONLY, 0666)
+	if err != nil {
+		fmt.Print("读取文件错误1", err)
+		return false
+	}
+	defer f.Close()
+	buf := bufio.NewWriter(f)
+	l, err := buf.WriteString(dataStr)
+	fmt.Println("l:", l)
+	if l<len(dataStr) {
+		fmt.Println(err)
+	}
+	errF := buf.Flush()
+	fmt.Println("errF:", errF)
+	return true
 }
-
+/**
+将模型转化为字符串
+ */
+func getModelString(models map[string]Model) string {
+	var field string
+	var data string
+	for _, model := range models {
+		modelV := reflect.ValueOf(model)
+		if field == "" {
+			for i := 0; i < modelV.Elem().NumField(); i++ {
+				field = field + "," + modelV.Elem().Type().Field(i).Name //Type结构体 Filed方法
+			}
+			field = strings.TrimPrefix(field, ",")
+		}
+		data = data + model.ToString() + "\n"
+	}
+	return field + "\n" + data
+}
