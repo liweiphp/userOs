@@ -1,6 +1,6 @@
 package main
 
-import "manager/controller"
+import "userOs/controller"
 
 func main() {
 	controller.Run()

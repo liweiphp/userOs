@@ -14,7 +14,7 @@ type Config struct {
 
 var (
 	instance *Config
-	conf = flag.String("conf", "/shell/study/golang/src/manager/etc/config.json", "config path")
+	conf = flag.String("conf", "/usr/local/go/src/userOs/etc/config.json", "config path")
 )
 
 func init()  {

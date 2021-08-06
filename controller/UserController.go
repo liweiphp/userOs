@@ -2,8 +2,8 @@ package controller
 
 import (
 	"fmt"
-	"manager/model"
-	"manager/util"
+	"userOs/model"
+	"userOs/util"
 	"strconv"
 )
 

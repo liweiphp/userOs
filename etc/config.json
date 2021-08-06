@@ -1,4 +1,4 @@
 {
-  "base_path" : "/shell/study/golang/src/manager/",
-  "data_path" : "/shell/study/golang/src/manager/data/"
+  "base_path" : "/usr/local/go/src/userOs/",
+  "data_path" : "/usr/local/go/src/userOs/data/"
 }
