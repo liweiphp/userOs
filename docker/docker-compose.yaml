@@ -1,0 +1,17 @@
+version: "3.8"
+x-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "1000m"
+    max-file: "5"
+services:
+  golang-test:
+    build: .
+    container_name: golang
+    restart: unless-stopped
+    init: true
+    volumes:
+      - ./app/userOs:/usr/local/go/src/userOs
+    command: /bin/bash
+    logging: *logging
+    tty: true
